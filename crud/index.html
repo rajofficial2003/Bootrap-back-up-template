@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Firebase CRUD</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+</head>
+<body>
+    <h1>Firebase CRUD Operations</h1>
+
+    <div>
+        <h2>Register User</h2>
+        <input type="text" id="register-email" placeholder="Email">
+        <input type="text" id="register-username" placeholder="Username">
+        <input type="number" id="register-age" placeholder="Age">
+        <button onclick="registerUser()">Register</button>
+    </div>
+
+    <div>
+        <h2>Read User</h2>
+        <input type="text" id="read-id" placeholder="Document ID">
+        <button onclick="readUser()">Read</button>
+        <p id="read-result"></p>
+    </div>
+
+    <div>
+        <h2>Update User</h2>
+        <input type="text" id="update-id" placeholder="Document ID">
+        <input type="text" id="update-email" placeholder="Email">
+        <input type="text" id="update-username" placeholder="Username">
+        <input type="number" id="update-age" placeholder="Age">
+        <button onclick="updateUser()">Update</button>
+    </div>
+
+    <div>
+        <h2>Delete User</h2>
+        <input type="text" id="delete-id" placeholder="Document ID">
+        <button onclick="deleteUser()">Delete</button>
+    </div>
+
+    <script>
+
+
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+  import { getFiestore , setDocs , addDoc , doc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBUl5g2sao9M0uJeJ4RWmcqqZWt1KJPSnA",
+    authDomain: "fir-crud-a6140.firebaseapp.com",
+    projectId: "fir-crud-a6140",
+    storageBucket: "fir-crud-a6140.appspot.com",
+    messagingSenderId: "644894781813",
+    appId: "1:644894781813:web:e51cf44eebef939bc1a33c",
+    measurementId: "G-4TRCXWXCXQ"
+  };
+
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        db.settings({
+            host: "asia-south1-firestore.googleapis.com",
+            ssl: true
+        });
+
+        // Register User
+        function registerUser() {
+            const email = document.getElementById('register-email').value;
+            const username = document.getElementById('register-username').value;
+            const age = document.getElementById('register-age').value;
+
+            db.collection("users").add({
+                email: email,
+                username: username,
+                age: parseInt(age)
+            })
+            .then(() => {
+                alert("User successfully registered!");
+            })
+            .catch((error) => {
+                console.error("Error registering user: ", error);
+            });
+        }
+
+        // Read User
+        function readUser() {
+            const id = document.getElementById('read-id').value;
+
+            db.collection("users").doc(id).get().then((doc) => {
+                if (doc.exists) {
+                    const user = doc.data();
+                    document.getElementById('read-result').textContent = `Email: ${user.email}, Username: ${user.username}, Age: ${user.age}`;
+                } else {
+                    document.getElementById('read-result').textContent = "No such user!";
+                }
+            }).catch((error) => {
+                console.log("Error getting user:", error);
+            });
+        }
+
+        // Update User
+        function updateUser() {
+            const id = document.getElementById('update-id').value;
+            const email = document.getElementById('update-email').value;
+            const username = document.getElementById('update-username').value;
+            const age = document.getElementById('update-age').value;
+
+            db.collection("users").doc(id).update({
+                email: email,
+                username: username,
+                age: parseInt(age)
+            })
+            .then(() => {
+                alert("User successfully updated!");
+            })
+            .catch((error) => {
+                console.error("Error updating user: ", error);
+            });
+        }
+
+        // Delete User
+        function deleteUser() {
+            const id = document.getElementById('delete-id').value;
+
+            db.collection("users").doc(id).delete().then(() => {
+                alert("User successfully deleted!");
+            }).catch((error) => {
+                console.error("Error removing user: ", error);
+            });
+        }
+    </script>
+</body>
+</html>
+
