@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "film": {
+      ".indexOn": ["title"],
+      ".read": true,
+      ".write": true
+    }
+
+  }
+}
+
+
+tthis youtube link
+https://youtu.be/J8ZUO3uUU6A?si=W3mfFg62B7fHeru6
