@@ -9,15 +9,15 @@
   // Your web app's Firebase configuration
   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
-    apiKey: "AIzaSyDIORZ40qnyMlULAqwQNmJV3KxiTUqyUa8",
-    authDomain: "fir-b1fb0.firebaseapp.com",
-    projectId: "fir-b1fb0",
-    storageBucket: "fir-b1fb0.appspot.com",
-    messagingSenderId: "1077130879034",
-    appId: "1:1077130879034:web:be12dc856dcfbc18d8d503",
-    measurementId: "G-QGFXC6DE4X"
-  };  
-
+    apiKey: "AIzaSyCp2e7CNo83HwDx_HAVgY_IDh0_KW2Y0HI",
+    authDomain: "y-spot-e84ca.firebaseapp.com",
+    databaseURL: "https://y-spot-e84ca-default-rtdb.firebaseio.com",
+    projectId: "y-spot-e84ca",
+    storageBucket: "y-spot-e84ca.appspot.com",
+    messagingSenderId: "783996806068",
+    appId: "1:783996806068:web:298ca1ddb4dfb7e758c8e1",
+    measurementId: "G-TSH2JVYJHR"
+  };
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const provider = new GoogleAuthProvider();
@@ -50,3 +50,14 @@ auth.languageCode = 'en';
     // ...
   });
   })
+  // const firebaseConfig = {
+  //   apiKey: "AIzaSyDIORZ40qnyMlULAqwQNmJV3KxiTUqyUa8",
+  //   authDomain: "fir-b1fb0.firebaseapp.com",
+  //   projectId: "fir-b1fb0",
+  //   storageBucket: "fir-b1fb0.appspot.com",
+  //   messagingSenderId: "1077130879034",
+  //   appId: "1:1077130879034:web:be12dc856dcfbc18d8d503",
+  //   measurementId: "G-QGFXC6DE4X"
+  // };  
+
+  
