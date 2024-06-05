@@ -73,3 +73,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutButton = document.getElementById("logoutButton");
+  logoutButton.addEventListener("click", function() {
+    console.log("Signing out...");
+    auth.signOut()
+      .then(() => {
+        // Sign-out successful.
+        console.log("Sign-out successful. Redirecting...");
+        window.location.href = "index.html"; // Redirect to logout page
+      })
+      .catch((error) => {
+        // An error happened.
+        console.error("Error signing out:", error);
+        alert("Error signing out. Please try again.");
+      });
+  });
+});
