@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,30 +20,56 @@ const provider = new GoogleAuthProvider();
 const auth = getAuth(app);
 auth.languageCode = 'en';
 
-// Add event listener to the Google login button
 document.addEventListener("DOMContentLoaded", () => {
   const googleLogin = document.getElementById("google-login-btn");
-  googleLogin.addEventListener("click", function() {
+  const logoutBtn = document.getElementById("logout-btn");
+  const username = document.getElementById("username");
+  const profile = document.getElementById("profile");
+
+  googleLogin.addEventListener("click", () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
+        // User successfully signed in
         const user = result.user;
         console.log(user);
         window.location.href = "logged.html";
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
+        // Handle Errors here
         console.error('Error during sign-in:', error);
-        alert(`Error: ${errorMessage} (Code: ${errorCode})`);
+        alert(`Error: ${error.message} (Code: ${error.code})`);
       });
+  });
+
+  logoutBtn.addEventListener("click", () => {
+    signOut(auth)
+      .then(() => {
+        console.log('User signed out.');
+        // Redirect to the login page
+        window.location.href = "index.html";
+      })
+      .catch((error) => {
+        console.error('Error during sign-out:', error);
+      });
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in
+      username.textContent = user.displayName;
+      profile.src = user.photoURL;
+      profile.style.display = 'block';
+      googleLogin.style.display = 'none';
+      logoutBtn.style.display = 'block';
+    } else {
+      // User is signed out
+      username.textContent = '';
+      profile.src = '';
+      profile.style.display = 'none';
+      googleLogin.style.display = 'block';
+      logoutBtn.style.display = 'none';
+      // Optionally, redirect to login page
+      window.location.href = "index.html";
+    }
   });
 });
