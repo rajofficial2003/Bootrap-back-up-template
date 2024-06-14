@@ -95,15 +95,10 @@
             crossorigin="anonymous"
         ></script>
         <script>
-            //   function sendData() {
-            // sendMessage();
-            // sendemail();
-            //   }
-          document.getElementById("myForm").addEventListener("submit", function(event) {
+            document.getElementById("myForm").addEventListener("submit", function(event) {
                 event.preventDefault(); // Prevent default form submission
                 sendMessage(); // Call the sendMessage function
                 sendemail();
-        
             });
         
             function sendMessage() {
