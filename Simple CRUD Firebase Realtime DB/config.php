@@ -1,2 +1,2 @@
 <?php
-$databaseURL = "https://YOURDB.firebaseio.com/";
+$databaseURL = "https://radha-realty--demo-app-default-rtdb.asia-southeast1.firebasedatabase.app/";
