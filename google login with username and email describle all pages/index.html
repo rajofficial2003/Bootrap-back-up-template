@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Page</title>
+</head>
+<body>
+    <h1>Welcome to the Index Page</h1>
+    <div id="userInfo">
+        <p>You have signed in as <span id="userName"></span> with the email <span id="userEmail"></span></p>
+    </div>
+
+    <script>
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+
+        const storedUserName = localStorage.getItem('userName');
+        const storedUserEmail = localStorage.getItem('userEmail');
+
+        if (storedUserName && storedUserEmail) {
+            userName.innerText = storedUserName;
+            userEmail.innerText = storedUserEmail;
+        } else {
+            document.getElementById('userInfo').innerText = 'No user is signed in.';
+        }
+    </script>
+</body>
+</html>
