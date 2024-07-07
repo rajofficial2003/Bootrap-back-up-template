@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Image Upload, Display, Edit, and Delete</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Firebase Configuration -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-analytics.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkTgEb7H_wNIgVhWwm-l-IzrHXDSe3ni4",
+      authDomain: "testcrud-103a3.firebaseapp.com",
+      projectId: "testcrud-103a3",
+      storageBucket: "testcrud-103a3.appspot.com",
+      messagingSenderId: "387302339276",
+      appId: "1:387302339276:web:e6c88525a1d80f9d154869",
+      measurementId: "G-ZR3EB3CD3Z"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const storage = getStorage(app);
+    const firestore = getFirestore(app);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const file = document.getElementById('fileInput').files[0];
+        const hotelName = document.getElementById('hotelName').value;
+        const price = document.getElementById('price').value;
+        const rating = document.getElementById('rating').value;
+
+        if (!file) {
+          alert("Please choose a file to upload first.");
+          return;
+        }
+
+        if (isNaN(parseFloat(rating))) {
+          alert("Please enter a valid rating.");
+          return;
+        }
+
+        try {
+          const storageRef = ref(storage, 'images/' + file.name);
+          const uploadTask = uploadBytesResumable(storageRef, file);
+
+          uploadTask.on('state_changed',
+            (snapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              document.getElementById('progress').textContent = 'Upload is ' + progress + '% done';
+            },
+            (error) => {
+              console.error('Upload failed:', error);
+            },
+            async () => {
+              const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+              await addDoc(collection(firestore, 'hotels'), {
+                hotelName,
+                price,
+                rating: parseFloat(rating),
+                imageUrl: downloadURL,
+                imageName: file.name
+              });
+
+              document.getElementById('downloadURL').innerHTML = `<a href="${downloadURL}" target="_blank">Download URL</a>`;
+              loadImages();
+            }
+          );
+        } catch (error) {
+          console.error('Error uploading file:', error);
+        }
+      });
+
+      const loadImages = async () => {
+        const imageTable = document.getElementById('imageTableBody');
+        imageTable.innerHTML = '';
+
+        try {
+          const querySnapshot = await getDocs(collection(firestore, 'hotels'));
+          querySnapshot.forEach((doc) => {
+            const hotel = doc.data();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><img src="${hotel.imageUrl}" class="img-fluid" width="100" /></td>
+              <td><a href="${hotel.imageUrl}" target="_blank">${hotel.imageUrl}</a></td>
+              <td>${hotel.hotelName}</td>
+              <td>${hotel.price}</td>
+              <td>${hotel.rating}</td>
+              <td><button class="btn btn-primary btn-sm" onclick="editImage('${hotel.imageName}', '${hotel.imageUrl}', '${doc.id}', '${hotel.hotelName}', '${hotel.price}', '${hotel.rating}')">Edit</button></td>
+              <td><button class="btn btn-danger btn-sm" onclick="deleteImage('${hotel.imageName}', '${doc.id}')">Delete</button></td>`;
+            imageTable.appendChild(row);
+          });
+        } catch (error) {
+          console.error('Error loading images:', error);
+        }
+      };
+
+      window.editImage = (imageName, url, docId, hotelName, price, rating) => {
+        document.getElementById('editSection').innerHTML = `
+          <h2>Edit Hotel Data</h2>
+          <img src="${url}" class="img-fluid" width="100" />
+          <form id="editForm">
+            <div class="form-group">
+              <label for="editHotelName">Hotel Name</label>
+              <input type="text" id="editHotelName" value="${hotelName}" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="editPrice">Price</label>
+              <input type="number" id="editPrice" value="${price}" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="editRating">Rating</label>
+              <input type="text" id="editRating" value="${rating}" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label for="editFileInput">Change Image (Optional)</label>
+              <input type="file" id="editFileInput" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Update Data</button>
+            <div id="editProgress"></div>
+          </form>
+        `;
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const newHotelName = document.getElementById('editHotelName').value;
+          const newPrice = document.getElementById('editPrice').value;
+          const newRating = document.getElementById('editRating').value;
+
+          if (isNaN(parseFloat(newRating))) {
+            alert("Please enter a valid rating.");
+            return;
+          }
+
+          const newFile = document.getElementById('editFileInput').files[0];
+
+          try {
+            const docRef = doc(firestore, 'hotels', docId);
+            const updateData = {
+              hotelName: newHotelName,
+              price: newPrice,
+              rating: parseFloat(newRating)
+            };
+
+            if (newFile) {
+              const storageRef = ref(storage, 'images/' + newFile.name);
+              const uploadTask = uploadBytesResumable(storageRef, newFile);
+
+              uploadTask.on('state_changed',
+                (snapshot) => {
+                  const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                  document.getElementById('editProgress').textContent = 'Upload is ' + progress + '% done';
+                },
+                (error) => {
+                  console.error('Upload failed:', error);
+                },
+                async () => {
+                  const newImageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                  updateData.imageUrl = newImageUrl;
+                  updateData.imageName = newFile.name;
+
+                  await updateDoc(docRef, updateData);
+                  await deleteObject(ref(storage, 'images/' + imageName)); // Delete old image
+
+                  document.getElementById('editSection').innerHTML = '';
+                  loadImages();
+                }
+              );
+            } else {
+              await updateDoc(docRef, updateData);
+              document.getElementById('editSection').innerHTML = '';
+              loadImages();
+            }
+          } catch (error) {
+            console.error('Error updating document:', error);
+          }
+        });
+      };
+
+      window.deleteImage = async (imageName, docId) => {
+        if (confirm("Are you sure you want to delete this image?")) {
+          try {
+            const storageRef = ref(storage, 'images/' + imageName);
+            await deleteObject(storageRef);
+
+            await deleteDoc(doc(firestore, 'hotels', docId));
+
+            alert("Image and hotel data deleted successfully.");
+            loadImages();
+          } catch (error) {
+            console.error('Error deleting image:', error);
+          }
+        }
+      };
+
+      loadImages();
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Hotel Data Upload and Management</h1>
+    <form id="uploadForm">
+      <div class="form-group">
+        <label for="fileInput">Hotel Image</label>
+        <input type="file" id="fileInput" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="hotelName">Hotel Name</label>
+        <input type="text" id="hotelName" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input type="number" id="price" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="rating">Rating</label>
+        <input type="text" id="rating" class="form-control" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Add Data</button>
+    </form>
+    <div id="progress" class="mt-2"></div>
+    <div id="downloadURL" class="mt-2"></div>
+
+    <h2 class="mt-4">Uploaded Hotels</h2>
+    <table class="table table-striped table-responsive">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>URL</th>
+          <th>Hotel Name</th>
+          <th>Price</th>
+          <th>Rating</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="imageTableBody">
+        <!-- Uploaded hotels will be displayed here -->
+      </tbody>
+    </table>
+
+    <div id="editSection" class="mt-4"></div>
+  </div>
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
