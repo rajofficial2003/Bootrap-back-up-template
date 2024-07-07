@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Management</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getDatabase, ref, set, get, update, remove } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
+    
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkTgEb7H_wNIgVhWwm-l-IzrHXDSe3ni4",
+      authDomain: "testcrud-103a3.firebaseapp.com",
+      databaseURL: "https://testcrud-103a3-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "testcrud-103a3",
+      storageBucket: "testcrud-103a3.appspot.com",
+      messagingSenderId: "387302339276",
+      appId: "1:387302339276:web:e6c88525a1d80f9d154869",
+      measurementId: "G-ZR3EB3CD3Z"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const hotelList = document.getElementById('hotel-list');
+      const editForm = document.getElementById('edit-hotel-form');
+      let currentEditId = null;
+
+      // Function to create hotel entry
+      const createHotel = () => {
+        const name = document.getElementById('name').value;
+        const location = document.getElementById('location').value;
+        const rooms = document.getElementById('rooms').value;
+        const id = new Date().getTime().toString();
+
+        set(ref(db, 'hotels/' + id), {
+          id,
+          name,
+          location,
+          rooms
+        }).then(() => {
+          alert('Hotel added successfully');
+          fetchHotels();
+        }).catch(error => {
+          alert('Error adding hotel: ' + error);
+        });
+      };
+
+      // Function to fetch and display hotels
+      const fetchHotels = () => {
+        hotelList.innerHTML = '';
+        get(ref(db, 'hotels')).then((snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            for (const id in data) {
+              const hotel = data[id];
+              const row = `<tr>
+                <td>${hotel.name}</td>
+                <td>${hotel.location}</td>
+                <td>${hotel.rooms}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" onclick="editHotel('${id}')">Edit</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteHotel('${id}')">Delete</button>
+                </td>
+              </tr>`;
+              hotelList.innerHTML += row;
+            }
+          } else {
+            hotelList.innerHTML = '<tr><td colspan="4">No hotels found</td></tr>';
+          }
+        }).catch(error => {
+          alert('Error fetching hotels: ' + error);
+        });
+      };
+
+      // Function to edit hotel entry
+      window.editHotel = (id) => {
+        currentEditId = id;
+        get(ref(db, 'hotels/' + id)).then((snapshot) => {
+          if (snapshot.exists()) {
+            const hotel = snapshot.val();
+            document.getElementById('edit-name').value = hotel.name;
+            document.getElementById('edit-location').value = hotel.location;
+            document.getElementById('edit-rooms').value = hotel.rooms;
+            $('#editHotelModal').modal('show');
+          } else {
+            alert('Hotel not found');
+          }
+        }).catch(error => {
+          alert('Error fetching hotel: ' + error);
+        });
+      };
+
+      // Function to update hotel entry
+      const updateHotel = () => {
+        const name = document.getElementById('edit-name').value;
+        const location = document.getElementById('edit-location').value;
+        const rooms = document.getElementById('edit-rooms').value;
+
+        update(ref(db, 'hotels/' + currentEditId), {
+          name,
+          location,
+          rooms
+        }).then(() => {
+          alert('Hotel updated successfully');
+          fetchHotels();
+          $('#editHotelModal').modal('hide');
+        }).catch(error => {
+          alert('Error updating hotel: ' + error);
+        });
+      };
+
+      // Function to delete hotel entry
+      window.deleteHotel = (id) => {
+        remove(ref(db, 'hotels/' + id)).then(() => {
+          alert('Hotel deleted successfully');
+          fetchHotels();
+        }).catch(error => {
+          alert('Error deleting hotel: ' + error);
+        });
+      };
+
+      // Fetch hotels on page load
+      fetchHotels();
+
+      // Add event listener to create button
+      document.getElementById('create-btn').addEventListener('click', createHotel);
+      document.getElementById('edit-btn').addEventListener('click', updateHotel);
+    });
+  </script>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Hotel Management</h1>
+    <form id="hotel-form" class="mb-4">
+      <div class="form-group">
+        <label for="name">Hotel Name</label>
+        <input type="text" id="name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="rooms">Number of Rooms</label>
+        <input type="number" id="rooms" class="form-control" required>
+      </div>
+      <button type="button" id="create-btn" class="btn btn-primary">Add Hotel</button>
+    </form>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Rooms</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="hotel-list">
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Edit Hotel Modal -->
+  <div class="modal fade" id="editHotelModal" tabindex="-1" aria-labelledby="editHotelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editHotelModalLabel">Edit Hotel</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="edit-hotel-form">
+            <div class="form-group">
+              <label for="edit-name">Hotel Name</label>
+              <input type="text" id="edit-name" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-location">Location</label>
+              <input type="text" id="edit-location" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="edit-rooms">Number of Rooms</label>
+              <input type="number" id="edit-rooms" class="form-control" required>
+            </div>
+            <button type="button" id="edit-btn" class="btn btn-primary">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
