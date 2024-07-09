@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Admin Panel</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Firebase Configuration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkTgEb7H_wNIgVhWwm-l-IzrHXDSe3ni4",
+      authDomain: "testcrud-103a3.firebaseapp.com",
+      databaseURL: "https://testcrud-103a3-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "testcrud-103a3",
+      storageBucket: "testcrud-103a3.appspot.com",
+      messagingSenderId: "387302339276",
+      appId: "1:387302339276:web:e6c88525a1d80f9d154869",
+      measurementId: "G-ZR3EB3CD3Z"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const firestore = getFirestore(app);
+    const storage = getStorage(app);
+
+    let currentUserEmail = '';
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUserEmail = user.email;
+        loadHotels();
+      } else {
+        window.location.href = 'index.html';
+      }
+    });
+
+    const loadHotels = async () => {
+      const hotelsTableBody = document.getElementById('hotelsTableBody');
+      hotelsTableBody.innerHTML = '';
+
+      const q = query(collection(firestore, 'hotels'), where('adminEmail', '==', currentUserEmail));
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        const hotel = doc.data();
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><img src="${hotel.imageUrl}" class="img-fluid" width="100" /></td>
+          <td>${hotel.hotelName}</td>
+          <td>${hotel.price}</td>
+          <td>${hotel.rating}</td>
+          <td>${hotel.rooms ? hotel.rooms.length : 0}</td>
+          <td><button class="btn btn-primary btn-sm" onclick="editHotel('${doc.id}', '${hotel.hotelName}', '${hotel.price}', '${hotel.rating}', '${hotel.imageUrl}', '${hotel.imageName}', '${JSON.stringify(hotel.rooms)}')">Edit</button></td>
+          <td><button class="btn btn-danger btn-sm" onclick="deleteHotel('${doc.id}', '${hotel.imageName}')">Delete</button></td>
+        `;
+        hotelsTableBody.appendChild(row);
+      });
+    };
+
+    window.editHotel = (id, name, price, rating, imageUrl, imageName, rooms) => {
+      // Populate the edit form
+      document.getElementById('editHotelId').value = id;
+      document.getElementById('editHotelName').value = name;
+      document.getElementById('editHotelPrice').value = price;
+      document.getElementById('editHotelRating').value = rating;
+      document.getElementById('editHotelImage').src = imageUrl;
+      document.getElementById('editHotelImageName').value = imageName;
+
+      // Populate rooms data
+      const roomsArray = JSON.parse(rooms || '[]');
+      const roomsContainer = document.getElementById('roomsContainer');
+      roomsContainer.innerHTML = '';
+      roomsArray.forEach((room, index) => {
+        addRoomForm(room.roomType, room.pricePerNight, room.availability, index);
+      });
+    };
+
+    window.deleteHotel = async (id, imageName) => {
+      if (confirm("Are you sure you want to delete this hotel?")) {
+        try {
+          await deleteDoc(doc(firestore, 'hotels', id));
+          await deleteObject(ref(storage, 'images/' + imageName));
+          loadHotels();
+        } catch (error) {
+          console.error('Error deleting hotel:', error);
+        }
+      }
+    };
+
+    const addRoomForm = (roomType = '', pricePerNight = '', availability = '', index) => {
+      const roomsContainer = document.getElementById('roomsContainer');
+      const roomForm = document.createElement('div');
+      roomForm.className = 'room-form';
+      roomForm.innerHTML = `
+        <div class="form-group">
+          <label for="roomType${index}">Room Type</label>
+          <input type="text" id="roomType${index}" class="form-control" value="${roomType}" required>
+        </div>
+        <div class="form-group">
+          <label for="pricePerNight${index}">Price Per Night</label>
+          <input type="number" id="pricePerNight${index}" class="form-control" value="${pricePerNight}" required>
+        </div>
+        <div class="form-group">
+          <label for="availability${index}">Availability</label>
+          <input type="number" id="availability${index}" class="form-control" value="${availability}" required>
+        </div>
+        <hr>
+      `;
+      roomsContainer.appendChild(roomForm);
+    };
+
+    document.getElementById('addRoomButton').addEventListener('click', () => {
+      const roomsContainer = document.getElementById('roomsContainer');
+      addRoomForm('', '', '', roomsContainer.children.length);
+    });
+
+    document.getElementById('editHotelForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const id = document.getElementById('editHotelId').value;
+      const name = document.getElementById('editHotelName').value;
+      const price = document.getElementById('editHotelPrice').value;
+      const rating = document.getElementById('editHotelRating').value;
+      const newImage = document.getElementById('editHotelImageInput').files[0];
+
+      const roomsContainer = document.getElementById('roomsContainer');
+      const rooms = [];
+      for (let i = 0; i < roomsContainer.children.length; i++) {
+        rooms.push({
+          roomType: document.getElementById(`roomType${i}`).value,
+          pricePerNight: document.getElementById(`pricePerNight${i}`).value,
+          availability: document.getElementById(`availability${i}`).value,
+        });
+      }
+
+      const hotelDocRef = doc(firestore, 'hotels', id);
+
+      const updatedData = {
+        hotelName: name,
+        price: price,
+        rating: rating,
+        rooms: rooms
+      };
+
+      if (newImage) {
+        const imageName = document.getElementById('editHotelImageName').value;
+        const storageRef = ref(storage, 'images/' + newImage.name);
+        const uploadTask = uploadBytesResumable(storageRef, newImage);
+        
+        uploadTask.on('state_changed', 
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            document.getElementById('editHotelProgress').textContent = 'Upload is ' + progress + '% done';
+          }, 
+          (error) => {
+            console.error('Upload failed:', error);
+          }, 
+          async () => {
+            const newImageUrl = await getDownloadURL(uploadTask.snapshot.ref);
+            updatedData.imageUrl = newImageUrl;
+            updatedData.imageName = newImage.name;
+
+            await deleteObject(ref(storage, 'images/' + imageName));
+            await updateDoc(hotelDocRef, updatedData);
+
+            document.getElementById('editHotelForm').reset();
+            document.getElementById('editHotelImage').src = '';
+            loadHotels();
+          }
+        );
+      } else {
+        await updateDoc(hotelDocRef, updatedData);
+        loadHotels();
+      }
+    });
+
+    document.getElementById('logoutButton').addEventListener('click', () => {
+      signOut(auth).then(() => {
+        window.location.href = 'index.html';
+      }).catch((error) => {
+        console.error('Error signing out:', error);
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Panel</h1>
+    <button id="logoutButton" class="btn btn-danger">Logout</button>
+    <h2>Hotels</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Rating</th>
+          <th>Rooms</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="hotelsTableBody"></tbody>
+    </table>
+
+    <h2>Edit Hotel</h2>
+    <form id="editHotelForm">
+      <input type="hidden" id="editHotelId">
+      <input type="hidden" id="editHotelImageName">
+      <div class="form-group">
+        <label for="editHotelName">Name</label>
+        <input type="text" id="editHotelName" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editHotelPrice">Price</label>
+        <input type="number" id="editHotelPrice" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editHotelRating">Rating</label>
+        <input type="number" id="editHotelRating" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editHotelImageInput">Image</label>
+        <input type="file" id="editHotelImageInput" class="form-control">
+        <img id="editHotelImage" src="" class="img-fluid mt-2" width="100">
+      </div>
+      <div id="editHotelProgress"></div>
+      
+      <h3>Rooms</h3>
+      <div id="roomsContainer"></div>
+      <button type="button" id="addRoomButton" class="btn btn-secondary">Add Room</button>
+      
+      <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+  </div>
+  <!-- Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
