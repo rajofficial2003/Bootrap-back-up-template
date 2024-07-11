@@ -12,6 +12,7 @@
 </head>
 <body>
   <div class="container">
+    <button id="back-button" class="btn btn-secondary mt-2">Back to Dashboard</button>
     <h2 class="my-4">Admin Profile</h2>
     <form id="admin-profile-form">
       <div class="form-group">
@@ -45,11 +46,15 @@
       </div>
       <div class="form-group">
         <label for="hotelDocuments">Hotel Documents:</label>
-        <textarea class="form-control" id="hotelDocuments" rows="3" required></textarea>
+        <input type="file" class="form-control-file" id="hotelDocuments" accept=".pdf,.doc,.docx" required>
+        <div id="hotelDocumentsContainer" class="mt-2">
+          <p id="hotelDocumentsDescription"  style="display: none;"></p>
+          <a id="hotelDocumentsLink" href="#" target="_blank" style="display: none;">View Document</a>
+          <ul id="documentsList" class="list-unstyled mt-2"></ul>
+        </div>
       </div>
       <button type="submit" class="btn btn-primary">Save</button>
     </form>
-    <button id="back-button" class="btn btn-secondary mt-2">Back to Dashboard</button>
   </div>
 
   <script>
@@ -82,8 +87,13 @@
             document.getElementById('email').value = adminData.email || user.email;
             document.getElementById('mobileNumber').value = adminData.mobileNumber || "000-000-0000";
             document.getElementById('address').value = adminData.address || "Sample Address";
-            document.getElementById('hotelDocuments').value = adminData.hotelDocuments || "Sample Documents";
             document.getElementById('profileImagePreview').src = adminData.profileImage || "https://via.placeholder.com/150";
+            if (adminData.hotelDocuments) {
+              document.getElementById('hotelDocumentsLink').href = adminData.hotelDocuments;
+              document.getElementById('hotelDocumentsLink').style.display = 'block';
+              document.getElementById('hotelDocumentsDescription').innerText = 'Uploaded document: ' + adminData.hotelDocuments.split('/').pop();
+            }
+            loadAllDocuments(user.uid);
           } else {
             // Fill with default sample text if no profile data exists
             document.getElementById('userName').value = "Sample User Name";
@@ -92,7 +102,6 @@
             document.getElementById('email').value = user.email;
             document.getElementById('mobileNumber').value = "000-000-0000";
             document.getElementById('address').value = "Sample Address";
-            document.getElementById('hotelDocuments').value = "Sample Documents";
             document.getElementById('profileImagePreview').src = "https://via.placeholder.com/150";
           }
         }).catch((error) => {
@@ -112,7 +121,7 @@
       const email = document.getElementById('email').value;
       const mobileNumber = document.getElementById('mobileNumber').value;
       const address = document.getElementById('address').value;
-      const hotelDocuments = document.getElementById('hotelDocuments').value;
+      const hotelDocumentsFile = document.getElementById('hotelDocuments').files[0];
 
       const user = firebase.auth().currentUser;
 
@@ -124,17 +133,33 @@
         storageRef.put(profileImageFile).then(() => {
           storageRef.getDownloadURL().then((url) => {
             profileImageUrl = url;
-            saveProfile(user, userName, hotelName, hotelWebsite, email, mobileNumber, address, hotelDocuments, profileImageUrl);
+            saveProfile(user, userName, hotelName, hotelWebsite, email, mobileNumber, address, profileImageUrl);
           });
         }).catch((error) => {
           console.error('Error uploading profile image: ', error);
         });
       } else {
-        saveProfile(user, userName, hotelName, hotelWebsite, email, mobileNumber, address, hotelDocuments, profileImageUrl);
+        saveProfile(user, userName, hotelName, hotelWebsite, email, mobileNumber, address, profileImageUrl);
+      }
+
+      if (hotelDocumentsFile) {
+        const storageRef = storage.ref(`admin_profile_documents/${user.uid}/${hotelDocumentsFile.name}`);
+        storageRef.put(hotelDocumentsFile).then(() => {
+          storageRef.getDownloadURL().then((url) => {
+            const hotelDocumentsUrl = url;
+            document.getElementById('hotelDocumentsLink').href = hotelDocumentsUrl;
+            document.getElementById('hotelDocumentsLink').style.display = 'block';
+            document.getElementById('hotelDocumentsDescription').innerText = 'Uploaded document: ' + hotelDocumentsFile.name;
+            saveHotelDocuments(user, hotelDocumentsUrl);
+            loadAllDocuments(user.uid); // Reload documents list after upload
+          });
+        }).catch((error) => {
+          console.error('Error uploading hotel documents: ', error);
+        });
       }
     });
 
-    function saveProfile(user, userName, hotelName, hotelWebsite, email, mobileNumber, address, hotelDocuments, profileImageUrl) {
+    function saveProfile(user, userName, hotelName, hotelWebsite, email, mobileNumber, address, profileImageUrl) {
       db.collection('adminProfiles').doc(user.uid).set({
         userName: userName,
         hotelName: hotelName,
@@ -142,13 +167,45 @@
         email: email,
         mobileNumber: mobileNumber,
         address: address,
-        hotelDocuments: hotelDocuments,
         profileImage: profileImageUrl,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(() => {
         alert('Admin profile updated successfully!');
       }).catch((error) => {
         console.error('Error writing admin profile document: ', error);
+      });
+    }
+
+    function saveHotelDocuments(user, hotelDocumentsUrl) {
+      db.collection('adminProfiles').doc(user.uid).update({
+        hotelDocuments: firebase.firestore.FieldValue.arrayUnion(hotelDocumentsUrl),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        alert('Hotel documents updated successfully!');
+      }).catch((error) => {
+        console.error('Error writing hotel documents: ', error);
+      });
+    }
+
+    function loadAllDocuments(uid) {
+      const documentsList = document.getElementById('documentsList');
+      documentsList.innerHTML = ''; // Clear previous list
+
+      const storageRef = storage.ref(`admin_profile_documents/${uid}`);
+      storageRef.listAll().then((result) => {
+        result.items.forEach((itemRef) => {
+          itemRef.getDownloadURL().then((url) => {
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = url;
+            link.target = '_blank';
+            link.innerText = itemRef.name;
+            listItem.appendChild(link);
+            documentsList.appendChild(listItem);
+          });
+        });
+      }).catch((error) => {
+        console.error('Error listing documents: ', error);
       });
     }
 
