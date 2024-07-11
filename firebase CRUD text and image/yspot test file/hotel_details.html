@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotel Details</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2 class="my-4">Hotel Details</h2>
+    <form id="hotel-details-form">
+      <div class="form-group">
+        <label for="hotelName">Hotel Name:</label>
+        <input type="text" class="form-control" id="hotelName" required>
+      </div>
+      <div class="form-group">
+        <label for="hotelAddress">Hotel Address:</label>
+        <input type="text" class="form-control" id="hotelAddress" required>
+      </div>
+      <div class="form-group">
+        <label for="numberOfRooms">Number of Rooms:</label>
+        <input type="number" class="form-control" id="numberOfRooms" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </form>
+    <button id="back-button" class="btn btn-secondary mt-2">Back to Dashboard</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkTgEb7H_wNIgVhWwm-l-IzrHXDSe3ni4",
+      authDomain: "testcrud-103a3.firebaseapp.com",
+      databaseURL: "https://testcrud-103a3-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "testcrud-103a3",
+      storageBucket: "testcrud-103a3.appspot.com",
+      messagingSenderId: "387302339276",
+      appId: "1:387302339276:web:e6c88525a1d80f9d154869",
+      measurementId: "G-ZR3EB3CD3Z"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Redirect to login if not authenticated
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Retrieve hotel details from Firestore
+        db.collection('hotels').doc(user.uid).get().then((doc) => {
+          if (doc.exists) {
+            const hotelData = doc.data();
+            document.getElementById('hotelName').value = hotelData.hotelName || "Sample Hotel Name";
+            document.getElementById('hotelAddress').value = hotelData.hotelAddress || "Sample Hotel Address";
+            document.getElementById('numberOfRooms').value = hotelData.numberOfRooms || "0";
+          } else {
+            // If no hotel data exists, fill with default sample text
+            document.getElementById('hotelName').value = "Sample Hotel Name";
+            document.getElementById('hotelAddress').value = "Sample Hotel Address";
+            document.getElementById('numberOfRooms').value = "0";
+          }
+        }).catch((error) => {
+          console.log('Error getting document:', error);
+        });
+      } else {
+        window.location.href = 'login.html';
+      }
+    });
+
+    document.getElementById('hotel-details-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const hotelName = document.getElementById('hotelName').value;
+      const hotelAddress = document.getElementById('hotelAddress').value;
+      const numberOfRooms = document.getElementById('numberOfRooms').value;
+
+      const user = firebase.auth().currentUser;
+
+      db.collection('hotels').doc(user.uid).set({
+        hotelName: hotelName,
+        hotelAddress: hotelAddress,
+        numberOfRooms: numberOfRooms,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        alert('Hotel details updated successfully!');
+      }).catch((error) => {
+        console.error('Error writing hotel document: ', error);
+      });
+    });
+
+    document.getElementById('back-button').addEventListener('click', function() {
+      window.location.href = 'admin_dashboard.html';
+    });
+  </script>
+</body>
+</html>

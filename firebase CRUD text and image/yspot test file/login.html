@@ -50,23 +50,20 @@
 
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          // Signed in
           const user = userCredential.user;
 
           // Save user profile to Firestore
           db.collection('adminProfiles').doc(user.uid).set({
             email: user.email,
             lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-          }).then(() => {
-            alert('Login successful!');
+          }, { merge: true }).then(() => {
             // Redirect to admin dashboard
             window.location.href = 'admin_dashboard.html';
           }).catch((error) => {
-            console.error('Error writing document: ', error);
+            console.error('Error writing admin profile: ', error);
           });
         })
         .catch((error) => {
-          const errorCode = error.code;
           const errorMessage = error.message;
           document.getElementById('error-message').textContent = errorMessage;
         });
