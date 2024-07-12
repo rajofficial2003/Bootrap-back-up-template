@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Select with Cancelable Options</title>
+    <style>
+        .selected-option {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 10px;
+            margin-right: 10px;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .selected-option span {
+            margin-right: 10px;
+        }
+        .selected-option button {
+            background-color: transparent;
+            color: red;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 0;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    
+    <label for="options">Choose options:</label>
+    <select id="options">
+        <option value="" disabled selected>Select your options</option>
+        <option value="WiFi">WiFi</option>
+        <option value="Food">Food</option>
+        <option value="Parking">Parking</option>
+        <option value="AC">AC</option>
+        <option value="Water Heater">Water Heater</option>
+        <option value="Restaurant">Restaurant</option>
+    </select>
+
+    <div id="selected-container"></div>
+
+    <script>
+        const selectElement = document.getElementById('options');
+        const selectedContainer = document.getElementById('selected-container');
+        const selectedOptions = new Set();
+
+        selectElement.addEventListener('change', (event) => {
+            const selectedValue = event.target.value;
+            if (selectedValue && !selectedOptions.has(selectedValue)) {
+                selectedOptions.add(selectedValue);
+                updateSelectedContainer();
+            }
+        });
+
+        function updateSelectedContainer() {
+            selectedContainer.innerHTML = '';
+            selectedOptions.forEach(option => {
+                const selectedOption = document.createElement('div');
+                selectedOption.className = 'selected-option';
+                selectedOption.innerHTML = `
+                    <span>${option}</span>
+                    <button onclick="removeSelectedOption('${option}')">&times;</button>
+                `;
+                selectedContainer.appendChild(selectedOption);
+            });
+        }
+
+        function removeSelectedOption(option) {
+            selectedOptions.delete(option);
+            updateSelectedContainer();
+        }
+    </script>
+
+</body>
+</html>
