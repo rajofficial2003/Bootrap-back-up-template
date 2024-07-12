@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multiple Select with Cancelable Options</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .selected-option {
             display: inline-flex;
             align-items: center;
-            margin-top: 10px;
-            margin-right: 10px;
+            margin: 5px;
             padding: 5px 10px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
             border-radius: 5px;
         }
         .selected-option span {
@@ -30,20 +30,22 @@
         }
     </style>
 </head>
-<body>
+<body class="container py-5">
     
-    <label for="options">Choose options:</label>
-    <select id="options">
-        <option value="" disabled selected>Select your options</option>
-        <option value="WiFi">WiFi</option>
-        <option value="Food">Food</option>
-        <option value="Parking">Parking</option>
-        <option value="AC">AC</option>
-        <option value="Water Heater">Water Heater</option>
-        <option value="Restaurant">Restaurant</option>
-    </select>
+    <div class="form-group">
+        <label for="options">Choose options:</label>
+        <select id="options" class="form-control">
+            <option value="" disabled selected>Select your options</option>
+            <option value="WiFi">WiFi</option>
+            <option value="Food">Food</option>
+            <option value="Parking">Parking</option>
+            <option value="AC">AC</option>
+            <option value="Water Heater">Water Heater</option>
+            <option value="Restaurant">Restaurant</option>
+        </select>
+    </div>
 
-    <div id="selected-container"></div>
+    <div id="selected-container" class="d-flex flex-wrap"></div>
 
     <script>
         const selectElement = document.getElementById('options');

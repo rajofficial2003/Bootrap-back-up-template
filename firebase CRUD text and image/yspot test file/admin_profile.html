@@ -46,12 +46,8 @@
       </div>
       <div class="form-group">
         <label for="hotelDocuments">Hotel Documents:</label>
-        <input type="file" class="form-control-file" id="hotelDocuments" accept=".pdf,.doc,.docx" required>
-        <div id="hotelDocumentsContainer" class="mt-2">
-          <p id="hotelDocumentsDescription"  style="display: none;"></p>
-          <a id="hotelDocumentsLink" href="#" target="_blank" style="display: none;">View Document</a>
-          <ul id="documentsList" class="list-unstyled mt-2"></ul>
-        </div>
+        <input type="file" class="form-control-file" id="hotelDocuments" accept=".pdf,.doc,.docx,.jpg,.png,.jpeg" required>
+        <ul id="documentsList" class="list-unstyled mt-2"></ul>
       </div>
       <button type="submit" class="btn btn-primary">Save</button>
     </form>
@@ -88,11 +84,6 @@
             document.getElementById('mobileNumber').value = adminData.mobileNumber || "000-000-0000";
             document.getElementById('address').value = adminData.address || "Sample Address";
             document.getElementById('profileImagePreview').src = adminData.profileImage || "https://via.placeholder.com/150";
-            if (adminData.hotelDocuments) {
-              document.getElementById('hotelDocumentsLink').href = adminData.hotelDocuments;
-              document.getElementById('hotelDocumentsLink').style.display = 'block';
-              document.getElementById('hotelDocumentsDescription').innerText = 'Uploaded document: ' + adminData.hotelDocuments.split('/').pop();
-            }
             loadAllDocuments(user.uid);
           } else {
             // Fill with default sample text if no profile data exists
@@ -147,11 +138,8 @@
         storageRef.put(hotelDocumentsFile).then(() => {
           storageRef.getDownloadURL().then((url) => {
             const hotelDocumentsUrl = url;
-            document.getElementById('hotelDocumentsLink').href = hotelDocumentsUrl;
-            document.getElementById('hotelDocumentsLink').style.display = 'block';
-            document.getElementById('hotelDocumentsDescription').innerText = 'Uploaded document: ' + hotelDocumentsFile.name;
             saveHotelDocuments(user, hotelDocumentsUrl);
-            loadAllDocuments(user.uid); // Reload documents list after upload
+            window.location.reload(); // Refresh the page after uploading the document
           });
         }).catch((error) => {
           console.error('Error uploading hotel documents: ', error);
@@ -189,23 +177,39 @@
 
     function loadAllDocuments(uid) {
       const documentsList = document.getElementById('documentsList');
-      documentsList.innerHTML = ''; // Clear previous list
+      documentsList.innerHTML = '';
 
       const storageRef = storage.ref(`admin_profile_documents/${uid}`);
       storageRef.listAll().then((result) => {
         result.items.forEach((itemRef) => {
           itemRef.getDownloadURL().then((url) => {
-            const listItem = document.createElement('li');
-            const link = document.createElement('a');
-            link.href = url;
-            link.target = '_blank';
-            link.innerText = itemRef.name;
-            listItem.appendChild(link);
-            documentsList.appendChild(listItem);
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.textContent = itemRef.name;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('btn', 'btn-danger', 'ml-1');
+            deleteButton.onclick = () => deleteDocument(uid, itemRef, li);
+
+            li.appendChild(a);
+            li.appendChild(deleteButton);
+            documentsList.appendChild(li);
           });
         });
       }).catch((error) => {
-        console.error('Error listing documents: ', error);
+        console.error('Error listing documents:', error);
+      });
+    }
+
+    function deleteDocument(uid, itemRef, listItem) {
+      itemRef.delete().then(() => {
+        listItem.remove();
+        alert('Document deleted successfully!');
+      }).catch((error) => {
+        console.error('Error deleting document:', error);
       });
     }
 
