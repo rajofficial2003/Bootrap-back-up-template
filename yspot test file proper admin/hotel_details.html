@@ -48,7 +48,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-</head>
+    <script src="firebase-config.js"></script> <!-- Include the config file -->
+</head> 
 <body class="container py-5">
     <button id="back-button" class="btn btn-secondary mt-2">Back to Dashboard</button>
     <h2 class="my-4">Hotel Details</h2>
@@ -91,22 +92,6 @@
     </form>
 
     <script>
-        // Firebase configuration
-        const firebaseConfig = {
-      apiKey: "AIzaSyCkTgEb7H_wNIgVhWwm-l-IzrHXDSe3ni4",
-      authDomain: "testcrud-103a3.firebaseapp.com",
-      databaseURL: "https://testcrud-103a3-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "testcrud-103a3",
-      storageBucket: "testcrud-103a3.appspot.com",
-      messagingSenderId: "387302339276",
-      appId: "1:387302339276:web:e6c88525a1d80f9d154869",
-      measurementId: "G-ZR3EB3CD3Z"
-    };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const storage = firebase.storage();
 
         // Handle select options
         const selectElement = document.getElementById('options');
@@ -226,31 +211,45 @@
                 hotelAddress,
                 roomPrice: parseFloat(roomPrice),
                 numRooms: parseInt(numRooms),
-                accommodationDetails, // Changed to store in accommodationDetails array
-                hotelImages: []
+                accommodationDetails
             };
 
             const hotelImagesInput = document.getElementById('hotelImages');
             const imageFiles = hotelImagesInput.files;
             const storageRef = storage.ref(`hotel-images/${user.uid}`);
 
-            const uploadPromises = [];
-            for (let i = 0; i < imageFiles.length; i++) {
-                const imageFile = imageFiles[i];
-                const imageRef = storageRef.child(imageFile.name);
-                uploadPromises.push(imageRef.put(imageFile));
-            }
+            // Step 1: Fetch existing hotel images
+            db.collection('hotels').doc(user.uid).get().then(doc => {
+                if (doc.exists) {
+                    const existingHotelData = doc.data();
+                    hotelData.hotelImages = existingHotelData.hotelImages || [];
+                } else {
+                    hotelData.hotelImages = [];
+                }
 
-            Promise.all(uploadPromises).then((snapshots) => {
+                // Step 2: Upload new images
+                const uploadPromises = [];
+                for (let i = 0; i < imageFiles.length; i++) {
+                    const imageFile = imageFiles[i];
+                    const imageRef = storageRef.child(imageFile.name);
+                    uploadPromises.push(imageRef.put(imageFile));
+                }
+
+                return Promise.all(uploadPromises);
+            }).then(snapshots => {
+                // Step 3: Get download URLs for the new images
                 const downloadURLPromises = snapshots.map(snapshot => snapshot.ref.getDownloadURL());
                 return Promise.all(downloadURLPromises);
-            }).then((downloadURLs) => {
-                hotelData.hotelImages = downloadURLs;
+            }).then(downloadURLs => {
+                // Step 4: Merge existing images with new images
+                hotelData.hotelImages = hotelData.hotelImages.concat(downloadURLs);
+
+                // Step 5: Update Firestore document
                 return db.collection('hotels').doc(user.uid).set(hotelData);
             }).then(() => {
                 alert('Hotel details saved successfully');
                 window.location.reload();
-            }).catch((error) => {
+            }).catch(error => {
                 console.error('Error saving hotel details:', error);
                 alert('Failed to save hotel details');
             });

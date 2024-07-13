@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2 class="my-4">Admin Dashboard</h2>
+    <div id="profile"></div>
+    <button id="logout-button" class="btn btn-danger">Logout</button>
+    <button id="admin-profile-button" class="btn btn-primary mt-2">Admin Profile</button>
+    <button id="hotel-details-button" class="btn btn-secondary mt-2">Hotel Details</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkTgEb7H_wNIgVhWwm-l-IzrHXDSe3ni4",
+      authDomain: "testcrud-103a3.firebaseapp.com",
+      databaseURL: "https://testcrud-103a3-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "testcrud-103a3",
+      storageBucket: "testcrud-103a3.appspot.com",
+      messagingSenderId: "387302339276",
+      appId: "1:387302339276:web:e6c88525a1d80f9d154869",
+      measurementId: "G-ZR3EB3CD3Z"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    // Redirect to login if not authenticated
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // Retrieve and display user profile from Firestore
+        db.collection('adminProfiles').doc(user.uid).get().then((doc) => {
+          if (doc.exists) {
+            const profileData = doc.data();
+            const profileImage = profileData.profileImage || 'https://via.placeholder.com/150';
+            document.getElementById('profile').innerHTML = `
+              <img src="${profileImage}" alt="Profile Image" class="img-thumbnail" style="width: 150px; height: 150px;">
+              <p><strong>Email:</strong> ${profileData.email}</p>
+              <p><strong>Last Login:</strong> ${profileData.lastLogin.toDate()}</p>
+            `;
+          } else {
+            console.log('No such document!');
+          }
+        }).catch((error) => {
+          console.log('Error getting document:', error);
+        });
+      } else {
+        window.location.href = './login/login.html';
+      }
+    });
+
+    document.getElementById('logout-button').addEventListener('click', function() {
+      firebase.auth().signOut().then(() => {
+        alert('Logout successful!');
+        window.location.href = './Login/login.html';
+      }).catch((error) => {
+        console.error('Logout error:', error);
+      });
+    });
+
+    document.getElementById('admin-profile-button').addEventListener('click', function() {
+      window.location.href = 'admin_profile.html';
+    });
+
+    document.getElementById('hotel-details-button').addEventListener('click', function() {
+      window.location.href = 'hotel_details.html';
+    });
+  </script>
+</body>
+</html>
