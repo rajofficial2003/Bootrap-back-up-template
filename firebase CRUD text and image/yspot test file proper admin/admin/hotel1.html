@@ -60,7 +60,7 @@
                     <div class="text-center mt-2">
                         <input type="file" id="hotelImages" accept="image/*" multiple>
                     </div>
-                    <div class="row mt-3" id="hotelImagesPreview"></div>
+                    <div class="container row mt-3 d-flex align-items-center justify-content-evenly" id="hotelImagesPreview"></div>
                     <div class="row justify-content-center d-flex align-items-center">
                         <div class="col-md-12">
                             <div class="p-1 py-1">
@@ -203,7 +203,6 @@
             });
         }
 
-        // Auth state change listener
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
                 loadHotelDetails(user);
@@ -224,9 +223,11 @@
                         accommodationDetails: Array.from(selectedOptions)
                     }, { merge: true }).then(() => {
                         console.log("Hotel details saved successfully!");
+                        alert("Hotel details saved successfully!");
                         uploadHotelImages(user);
                     }).catch((error) => {
                         console.log("Error saving hotel details: ", error);
+                        alert("Error saving hotel details: " + error.message);
                     });
                 });
             } else {
@@ -262,12 +263,15 @@
                         hotelImages: firebase.firestore.FieldValue.arrayUnion(...imageUrls)
                     }).then(() => {
                         console.log("Images uploaded and URLs saved to Firestore successfully!");
+                        alert("Images uploaded and URLs saved successfully!");
                         loadHotelDetails(user); // Refresh the hotel details after saving
                     }).catch((error) => {
                         console.log("Error updating image URLs: ", error);
+                        alert("Error updating image URLs: " + error.message);
                     });
                 }).catch((error) => {
                     console.log("Error uploading images: ", error);
+                    alert("Error uploading images: " + error.message);
                 });
             }
         }
@@ -289,17 +293,21 @@
                                 hotelImages: updatedHotelImages
                             }).then(() => {
                                 console.log("Image URL removed from Firestore");
+                                alert("Image deleted successfully!");
                                 loadHotelDetails(user); // Refresh the hotel details after deletion
                             }).catch((error) => {
                                 console.log("Error removing image URL from Firestore: ", error);
+                                alert("Error removing image URL: " + error.message);
                             });
                         }).catch((error) => {
                             console.log("Error deleting image from Firebase Storage: ", error);
+                            alert("Error deleting image: " + error.message);
                         });
                     }
                 }
             }).catch((error) => {
                 console.log("Error getting hotel details: ", error);
+                alert("Error getting hotel details: " + error.message);
             });
         }
 
