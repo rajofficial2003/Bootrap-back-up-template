@@ -69,8 +69,8 @@
                 <p><strong>Number of Rooms:</strong> ${hotel.numRooms}</p>
                 <p><strong>Room Price:</strong> ${hotel.roomPrice}</p>
                 <div>
-                    <strong>Images:</strong>
-                    ${hotel.hotelImages.map(image => `<img src="${image}" class="img-fluid img-thumbnail">`).join('')}
+                    <strong>Image:</strong>
+                    <img src="${hotel.hotelImages[0]}" class="img-fluid img-thumbnail">
                 </div>
             `;
             
