@@ -77,40 +77,62 @@
 </head>
 
 <body class="container py-5">
-    <button id="back-button" class="btn btn-secondary mt-2">Back to Dashboard</button>
-    <h2 class="my-4">Room Details</h2>
-    <form id="room-details-form">
-        <div class="form-group">
-            <label for="roomType">Room Type:</label>
-            <input type="text" class="form-control" id="roomType" required>
+    <div class="container-fluid">
+        <div class="border p-4 shadow-sm rounded-3 ">
+            <div class=" rounded bg-white mb-2">
+                <form id="room-details-form">
+                    <div class="row">
+                        <div class="col-lg-4  col-md-4">
+                            <div class="text-start  mt-2">
+                                <h4 style="color: #ff0000;"><b>Room Images:</b></h4>
+    
+                                <div class="form-group">
+                                    <div class="row mt-3" id="roomImagesPreview"></div>
+                                    <input type="file" class="form-control-file" id="roomImages" accept="image/*" multiple>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-md-8">
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-group">
+                                        <label for="roomType">Room Type:</label>
+                                        <input type="text" class="form-control" id="roomType" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="roomNumber">Room Number:</label>
+                                        <input type="text" class="form-control" id="roomNumber" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <div class="form-group">
+                                        <label for="roomPrice">Room Price:</label>
+                                        <input type="number" class="form-control" id="roomPrice" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bedType">Bed Type:</label>
+                                        <input type="text" class="form-control" id="bedType" required>
+                                    </div>
+                                </div>
+                                <div class=" col-md-12">
+                                    <div class="row">
+                                        <div class="form-group col-lg-6 col-md-12 text-center mt-3">
+                                            <label for="availability">Availability:</label>
+                                            <label class="toggle-btn">
+                                                <input type="checkbox" id="availability">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12 text-center mt-3"><button type="submit" class="btn text-light" style="background-color: #ff0000;">Save</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="roomNumber">Room Number:</label>
-            <input type="text" class="form-control" id="roomNumber" required>
-        </div>
-        <div class="form-group">
-            <label for="roomPrice">Room Price:</label>
-            <input type="number" class="form-control" id="roomPrice" required>
-        </div>
-        <div class="form-group">
-            <label for="bedType">Bed Type:</label>
-            <input type="text" class="form-control" id="bedType" required>
-        </div>
-        <div class="form-group">
-            <label for="availability">Availability:</label>
-            <label class="toggle-btn">
-                <input type="checkbox" id="availability">
-                <span class="slider"></span>
-            </label>
-        </div>
-        <div class="form-group">
-            <label for="roomImages">Room Images:</label>
-            <input type="file" class="form-control-file" id="roomImages" accept="image/*" multiple>
-        </div>
-        <button type="submit" class="btn btn-primary">Save</button>
-        <div class="row mt-3" id="roomImagesPreview"></div>
-    </form>
-
+    </div>
     <script>
         // firebase-config.js
         // Your Firebase configuration
@@ -148,7 +170,7 @@
                     if (roomData.roomImages && roomData.roomImages.length > 0) {
                         roomData.roomImages.forEach((imageURL, index) => {
                             const colDiv = document.createElement('div');
-                            colDiv.className = 'col-md-2';
+                            colDiv.className = 'col-md-6';
 
                             const imageContainer = document.createElement('div');
                             imageContainer.className = 'image-container';
@@ -157,7 +179,7 @@
                             image.alt = 'Room Image';
                             image.className = 'img-thumbnail';
                             image.style.width = '100%';
-                            image.style.height = 'auto';
+                            image.style.height = '10rem';
                             imageContainer.appendChild(image);
 
                             const deleteButton = document.createElement('a');
