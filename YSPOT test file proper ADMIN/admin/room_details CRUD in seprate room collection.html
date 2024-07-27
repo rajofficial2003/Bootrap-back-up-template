@@ -79,12 +79,13 @@
 <body class="container py-5">
     <div class="container-fluid">
         <div class="border p-4 shadow-sm rounded-3 ">
-            <div class="rounded bg-white mb-2">
+            <div class=" rounded bg-white mb-2">
                 <form id="room-details-form">
                     <div class="row">
-                        <div class="col-lg-4 col-md-4">
-                            <div class="text-start mt-2">
+                        <div class="col-lg-4  col-md-4">
+                            <div class="text-start  mt-2">
                                 <h4 style="color: #ff0000;"><b>Room Images:</b></h4>
+    
                                 <div class="form-group">
                                     <div class="row mt-3" id="roomImagesPreview"></div>
                                     <input type="file" class="form-control-file" id="roomImages" accept="image/*" multiple>
@@ -113,7 +114,7 @@
                                         <input type="text" class="form-control" id="bedType" required>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class=" col-md-12">
                                     <div class="row">
                                         <div class="form-group col-lg-6 col-md-12 text-center mt-3">
                                             <label for="availability">Availability:</label>
@@ -122,9 +123,7 @@
                                                 <span class="slider"></span>
                                             </label>
                                         </div>
-                                        <div class="col-lg-6 col-md-12 text-center mt-3">
-                                            <button type="submit" class="btn text-light" style="background-color: #ff0000;">Save</button>
-                                        </div>
+                                        <div class="col-lg-6 col-md-12 text-center mt-3"><button type="submit" class="btn text-light" style="background-color: #ff0000;">Save</button></div>
                                     </div>
                                 </div>
                             </div>
@@ -155,9 +154,7 @@
 
         // Load room details
         function loadRoomDetails(user) {
-            const hotelId = user.uid; // Assuming user.uid is the hotel ID
-
-            db.collection('hotels').doc(hotelId).collection('rooms').doc(user.uid).get().then((doc) => {
+            db.collection('rooms').doc(user.uid).get().then((doc) => {
                 if (doc.exists) {
                     const roomData = doc.data();
                     document.getElementById('roomType').value = roomData.roomType || "Sample Room Type";
@@ -230,7 +227,6 @@
             const bedType = document.getElementById('bedType').value;
             const availability = document.getElementById('availability').checked;
             const user = firebase.auth().currentUser;
-            const hotelId = user.uid; // Assuming user.uid is the hotel ID
 
             const roomData = {
                 roomType,
@@ -242,10 +238,10 @@
 
             const roomImagesInput = document.getElementById('roomImages');
             const imageFiles = roomImagesInput.files;
-            const storageRef = storage.ref(`hotel-images/${hotelId}`);
+            const storageRef = storage.ref(`room-images/${user.uid}`);
 
             // Step 1: Fetch existing room images
-            db.collection('hotels').doc(hotelId).collection('rooms').doc(user.uid).get().then(doc => {
+            db.collection('rooms').doc(user.uid).get().then(doc => {
                 if (doc.exists) {
                     const existingRoomData = doc.data();
                     roomData.roomImages = existingRoomData.roomImages || [];
@@ -271,7 +267,7 @@
                 roomData.roomImages = roomData.roomImages.concat(downloadURLs);
 
                 // Step 5: Update Firestore document
-                return db.collection('hotels').doc(hotelId).collection('rooms').doc(user.uid).set(roomData);
+                return db.collection('rooms').doc(user.uid).set(roomData);
             }).then(() => {
                 alert('Room details saved successfully');
                 window.location.reload();
@@ -282,8 +278,7 @@
         });
 
         function deleteImage(user, index) {
-            const hotelId = user.uid; // Assuming user.uid is the hotel ID
-            db.collection('hotels').doc(hotelId).collection('rooms').doc(user.uid).get().then((doc) => {
+            db.collection('rooms').doc(user.uid).get().then((doc) => {
                 if (doc.exists) {
                     const roomData = doc.data();
                     const imageURL = roomData.roomImages[index];
@@ -291,7 +286,7 @@
 
                     imageRef.delete().then(() => {
                         roomData.roomImages.splice(index, 1);
-                        db.collection('hotels').doc(hotelId).collection('rooms').doc(user.uid).update({ roomImages: roomData.roomImages });
+                        db.collection('rooms').doc(user.uid).update({ roomImages: roomData.roomImages });
                         loadRoomDetails(user);
                     }).catch((error) => {
                         console.error('Error deleting image:', error);
