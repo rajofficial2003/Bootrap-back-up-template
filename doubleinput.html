@@ -1,0 +1,105 @@
+<div class="mb-3 d-flex row">
+    <div class="col-12 col-lg-3">
+        <label for="streamSelect" class="form-label px-4">Stream</label>
+    </div>
+    <div class="col-12 col-lg-9">
+        <select class="form-select border-danger shadow custom-dropdown" id="streamSelect"
+            aria-describedby="streamHelp">
+            <option class="bg-danger text-light" value="" disabled selected>Select Stream</option>
+            <option class="bg-danger text-light" value="engineering">Engineering Departments</option>
+            <option class="bg-danger text-light" value="mba">MBA</option>
+            <option class="bg-danger text-light" value="arts-science">Arts & Science Department</option>
+            <option class="bg-danger text-light" value="platform">Platform</option>
+        </select>
+    </div>
+</div>
+<div class="mb-3 d-flex row">
+    <div class="col-12 col-lg-3">
+        <label for="subStreamSelect" class="form-label px-4">Sub Stream</label>
+    </div>
+    <div class="col-12 col-lg-9">
+        <select class="form-select border-danger shadow custom-dropdown" id="subStreamSelect"
+            aria-describedby="subStreamHelp">
+            <option class="bg-danger text-light" value="" disabled selected>Select Sub-Stream</option>
+        </select>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const streamSelect = document.getElementById('streamSelect');
+      const subStreamSelect = document.getElementById('subStreamSelect');
+
+      const subStreams = {
+        engineering: {
+          placeholder: 'Select Engineering Department Stream',
+          options: [
+            'Internship For CSE',
+            'Internship For IT',
+            'Internship For ECE',
+            'Internship For EEE',
+            'Internship For AI & DS',
+            'Internship For Biomedical',
+            'Internship For EIE',
+            'Internship For ICE',
+            'Internship For Civil',
+            'Internship For Mechanical',
+
+          ]
+        },
+        mba: {
+          placeholder: 'Select MBA Specialization',
+          options: [
+            'MBA in Finance',
+            'MBA in Human Resurces Management',
+            'MBA in Marketing',
+            'MBA in Information Technology (IT)',
+            'MBA in Operation Management'
+
+          ]
+        },
+        'arts-science': {
+          placeholder: 'Select Arts & Science Stream',
+          options: [
+            'Internship For BCA',
+            'Internship For MCA',
+            'Internship For B.SC',
+            'Internship For M.SC',
+            'Internship For B.COM',
+            'Internship For BBA ',
+
+          ]
+        },
+        platform: {
+          placeholder: 'Select Platform Area',
+          options: [
+            'Internship in Web Development',
+            'Internship in Embedded Systems',
+            'Internship in IOT',
+            'Internship in JAVA',
+            'Internship in Android',
+            'Internship in DOTNET ',
+            'Internship in Cloud Computing',
+            'Internship in Bigdata',
+            'Internship in Artificial Intelligence AIDS',
+
+          ]
+        }
+      };
+
+      streamSelect.addEventListener('change', function () {
+        const selectedStream = streamSelect.value;
+        const { placeholder, options } = subStreams[selectedStream] || { placeholder: 'Select Sub-Stream', options: [] };
+
+        // Update placeholder
+        subStreamSelect.innerHTML = `<option class="bg-danger text-light" value="" disabled selected>${placeholder}</option>`;
+
+        // Add new options
+        options.forEach(function (subStream) {
+          const option = document.createElement('option');
+          option.value = subStream;
+          option.textContent = subStream;
+          subStreamSelect.appendChild(option);
+        });
+      });
+    });
+  </script>
