@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Title</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+
+        <!-- Bootstrap CSS v5.2.1 -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+        <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"
+    ></script>
+      <script type="text/javascript">
+        (function () {
+            emailjs.init("kxiZ3LImnbcf_3PVr");
+        })();
+        </script>
+    </head>
+
+    <body>
+        <header>
+            <!-- place navbar here -->
+        </header>
+        <main>
+            <div class="contact">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+        
+                            <form class="main_form" id="myForm">
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                        <label for="validationCustom02" class="form-label">Service</label>
+                                        <select class="form-select col-12" id="service" style="border: #121482 solid 2px;">
+                                            <option selected="" disabled="" value="" class="placeholder">Choose...</option>
+                                            <option>CCTV Installation</option>
+                                            <option>Desktop And Laptop Motherboard Chip Level Service</option>
+                                            <option>Printer and Xerox Machine Service</option>
+                                            <option>Hardware And Networking</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                        <label for="validationCustom02" class="form-label">Location</label>
+                                        <input class="form-control" placeholder="Tiruvannamalai" id="location" type="text" name="Your Name">
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                        <label for="validationCustom02" class="form-label">Name</label>
+                                        <input class="form-control" placeholder="Your name" type="text" id="name" name="Your Name">
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                        <label for="validationCustom02" class="form-label">Email</label>
+                                        <input class="form-control" placeholder="Email" type="text" name="Email " id="email">
+                                    </div>
+                                    <div class=" col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                        <label for="validationCustom02" class="form-label">Phone</label>
+                                        <input class="form-control" placeholder="Phone" type="text" name="Phone" id="phone">
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                        <label for="validationCustom02" class="form-label">Message</label>
+                                        <textarea class="textarea" placeholder="Message" id="message"></textarea>
+                                    </div>
+                                    <div class=" col-md-12"> 
+                                        <button class="send rounded-pill"  type="submit">Send</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <!-- place footer here -->
+        </footer>
+        <!-- Bootstrap JavaScript Libraries -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"
+        ></script>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+            crossorigin="anonymous"
+        ></script>
+        <script>
+              function sendData() {
+            sendMessage();
+            sendemail();
+              }
+          document.getElementById("myForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent default form submission
+                sendMessage(); // Call the sendMessage function
+                sendemail();
+        
+            });
+        
+            function sendMessage() {
+                var phonenumber = "+8438438413"; // Your WhatsApp phone number
+                var name = document.getElementById("name").value;
+                var email = document.getElementById("email").value;
+                var phone = document.getElementById("phone").value;
+                var message = document.getElementById("message").value;
+                var service = document.getElementById("service").value;
+                var location = document.getElementById("location").value;
+        
+          var url = "https://wa.me/" + phonenumber + "?text=" +
+              "Name: " + name + "%0a" +
+              "Email: " + email + "%0a" +
+              "Phone: " + phone + "%0a" +
+              "Message: " + message + "%0a" +
+              "Service: " + service + "%0a" +
+              "Location: " + location + "%0a" +
+              "This message is sent via the contact form on our website.";
+        
+            window.open(url, '_blank').focus();
+          }
+              function sendemail() {
+                var service = document.getElementById("service").value;
+                var location = document.getElementById("location").value;
+                var name = document.getElementById("name").value;
+                var email = document.getElementById("email").value;
+                var phone = document.getElementById("phone").value;
+                var message = document.getElementById("message").value;
+        
+                var templateParams = {
+                    service: service,
+                    location: location,
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    message: message,
+                };
+        
+                emailjs
+                  .send("service_72oojpb", "template_g29oszk", templateParams)
+                  .then(function (response) {
+                    console.log("SUCCESS!", response.status, response.text);
+                    window.alert("Sent successfully!");
+                  });
+              }
+            </script>
+    </body>
+</html>
