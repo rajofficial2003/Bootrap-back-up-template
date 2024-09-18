@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Preview</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+
+    .navbar {
+      background-color: blue;
+    }
+
+    .navbar-brand,
+    .nav-link {
+      color: white !important;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+    }
+
+    .container {
+      margin-top: 30px;
+    }
+
+    .card {
+      margin-bottom: 20px;
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px; /* Fixed height */
+      object-fit: fit; /* Ensure image covers the area without distortion */
+    }
+
+    .card-body {
+      text-align: center;
+    }
+
+    .card-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  </style>
+  <!-- Firebase Configuration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyDmYa6Sa_4MQ_OVz--txVtpaNOamZSsswU",
+  authDomain: "bharath-academy-f4fa0.firebaseapp.com",
+  projectId: "bharath-academy-f4fa0",
+  storageBucket: "bharath-academy-f4fa0.appspot.com",
+  messagingSenderId: "456644111847",
+  appId: "1:456644111847:web:5891b6428c26532891e142",
+  measurementId: "G-PJ7W4LZ9SJ"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const firestore = getFirestore(app);
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const galleryContainer = document.getElementById('galleryContainer');
+      
+      try {
+        const querySnapshot = await getDocs(collection(firestore, 'MarriageHallImages'));
+        querySnapshot.forEach((doc) => {
+          const hotel = doc.data();
+          const card = document.createElement('div');
+          card.classList.add('col-md-6');
+          card.innerHTML = `
+            <img src="${hotel.imageUrl}" class="img-thumbnail" alt="${hotel.hotelName}">
+          `;
+          galleryContainer.appendChild(card);
+        });
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      }
+    });
+  </script>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light">
+    <a class="navbar-brand" href="#">Bharath Academy</a>
+  </nav>
+
+  <!-- Image Grid -->
+  <div class="container">
+    <h2 class="text-center">Image Gallery</h2>
+    <div class="row" id="galleryContainer">
+      <!-- Images will be loaded here -->
+    </div>
+  </div>
+
+  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="..." class="rounded mr-2" alt="...">
+      <strong class="mr-auto">Bootstrap</strong>
+      <small>11 mins ago</small>
+      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      Hello, world! This is a toast message.
+    </div>
+  </div>
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
