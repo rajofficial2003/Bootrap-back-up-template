@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <!-- Bootstrap CSS v5.3.2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <!-- Bootstrap CSS v5.3.2 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <img src="./img/logo.png" alt="Logo">
+    </div>
+    <ul class="nav flex-column mt-2">
+      <li class="nav-item my-1">
+        <a class="nav-link   p-3" href="index.html">
+          <img src="./img/sidbar icons/Dashboard Logo.png" style="padding: 2px;" height="20px" alt=""> Dashboard
+        </a>
+      </li>
+      <li class="nav-item my-1">
+        <a class="nav-link p-3" href="Employee.html">
+          <img src="./img/sidbar icons/Employee Logo.png" style="padding: 2px;" height="20px" alt=""> Employee
+        </a>
+      </li>
+      <li class="nav-item my-1">
+        <a class="nav-link active p-3" href="AttendanceList.html">
+          <img src="./img/sidbar icons/Attendance.png" style="padding: 2px;" height="20px" alt=""> Attendance
+        </a>
+      </li>
+      <li class="nav-item my-1">
+        <a class="nav-link p-3" href="leave.html">
+          <img src="./img/sidbar icons/leave.png" style="padding: 2px;" height="20px" alt=""> Leave
+        </a>
+      </li>
+      <li class="nav-item my-1 dropdown">
+        <a class="nav-link p-3 dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="./img/sidbar icons/department.png" style="padding: 2px;" height="20px" alt=""> Department
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="Department.html"><img src="./img/sidbar icons/Frame 38.png" style="padding: 2px;" height="20px" alt="">New Department</a></li>
+        </ul>
+      </li>
+      <li class="nav-item my-1">
+        <a class="nav-link p-3" href="Payroll.html">
+          <img src="./img/sidbar icons/Payroll.png" style="padding: 2px;" height="20px" alt="">
+          Payroll
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="content">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <button class="btn btn-dark toggle-btn d-lg-none mx-2" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="dropdown ms-auto mx-2">
+        <img src="https://tse1.mm.bing.net/th?id=OIP.bJpr9jpclIkXQT-hkkb1KQHaHa&pid=Api&rs=1&c=1&qlt=95&w=114&h=114" alt="Profile" class="profile-icon dropdown-toggle" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+          <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+          <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+    
+    <div class="container-fluid">
+      <div class="rounded-3">
+        <div class="d-flex justify-content-between px-3 align-items-end">
+          <div>
+            <h3>Attendance List</h3>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item active text-danger" aria-current="page"><b>Home</b></li>
+                <li class="breadcrumb-item active" aria-current="page">Employee</li>
+              </ol>
+            </nav>
+          </div>
+          <div class="button text-end m-2 mx-1">
+            <a href="Add Employee.html">
+              <button class="align-items-center text-end bg-danger text-light fw-bold p-1 px-2 rounded" style="border: none;" data-bs-toggle="tooltip" data-bs-placement="right" title="CREATE">
+                <b><i class="fa-solid fa-plus"></i></b>
+              </button>
+            </a>
+          </div>
+        </div>
+    
+        <div class="container my-2">
+          <div class="search-controls table-container p-3 rounded">
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <input id="dateInput" type="month" class="form-control" placeholder="Select Date">
+              </div>
+              <div class="col-md-4">
+                <select id="branchInput" class="form-select">
+                  <option value="all">All Branches</option>
+                  <option value="branch1">Branch 1</option>
+                  <option value="branch2">Branch 2</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <select id="departmentInput" class="form-select">
+                  <option value="all">All Departments</option>
+                  <option value="hr">HR</option>
+                  <option value="it">IT</option>
+                </select>
+              </div>
+            </div>
+    
+            <div class="text-end">
+              <button id="searchBtn" class="btn btn-danger mx-5">Search</button>
+            </div>
+          </div>
+        </div>
+    
+        <div class="container my-4">
+          <div class="table-container p-3 rounded">
+            <div class="d-flex justify-content-between mb-3">
+              <div>
+                <select id="rowsPerPage" class="form-select w-auto">
+                  <option value="all">All</option>
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                </select>
+              </div>
+              <div class="input-group w-50">
+                <input id="searchInput" type="text" class="form-control" placeholder="Search by Employee Name">
+                <button class="btn btn-outline-danger" type="button">Search</button>
+              </div>
+            </div>
+    
+            <div class="table-responsive">
+              <table class="table table-bordered text-center">
+                <thead>
+                  <tr>
+                    <th>EMPLOYEE</th>
+                    <th>DATE</th>
+                    <th>STATUS</th>
+                    <th>CLOCK IN</th>
+                    <th>CLOCK OUT</th>
+                    <th>LATE</th>
+                    <th>EARLY LEAVING</th>
+                    <th>OVERTIME</th>
+                    <th>ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTable">
+                  <!-- Attendance records will go here -->
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2021-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Rajkumar</td>
+                    <td>2021-01-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>dhaksnamooethy</td>
+                    <td>2001-07-08</td>
+                    <td>Present</td>
+                    <td>9:00 AM</td>
+                    <td>6:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn"><i class="fa-solid fa-recycle"></i></button></td>
+                  </tr>
+                  <!-- More rows... -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+    
+        <script>
+          // Handle rows per page functionality
+          document.getElementById('rowsPerPage').addEventListener('change', function () {
+            let value = this.value;
+            let rows = document.querySelectorAll('#attendanceTable tr');
+    
+            rows.forEach((row, index) => {
+              if (value === 'all') {
+                row.style.display = '';
+              } else {
+                row.style.display = (index < value) ? '' : 'none';
+              }
+            });
+          });
+    
+          // Trigger the change event on page load to apply the default 10 rows
+          document.getElementById('rowsPerPage').dispatchEvent(new Event('change'));
+    
+          // Search functionality for employee name
+          document.getElementById('searchInput').addEventListener('input', function () {
+            filterTable();
+          });
+    
+          // Filter based on month and employee name
+          document.getElementById('dateInput').addEventListener('change', function () {
+            filterTable();
+          });
+    
+          // Function to filter table
+          function filterTable() {
+            let filter = document.getElementById('searchInput').value.toLowerCase();
+            let selectedMonth = document.getElementById('dateInput').value;
+            let rows = document.querySelectorAll('#attendanceTable tr');
+    
+            rows.forEach((row) => {
+              let employeeName = row.cells[0].textContent.toLowerCase();
+              let rowDate = row.cells[1].textContent;
+    
+              // Check if the employee name matches the filter
+              let nameMatch = employeeName.includes(filter);
+    
+              // Check if the date is in the selected month
+              let dateMatch = true;
+              if (selectedMonth) {
+                let rowMonth = rowDate.substring(0, 7); // Extract YYYY-MM part of the date
+                dateMatch = rowMonth === selectedMonth;
+              }
+    
+              // Show row if both conditions are true
+              if (nameMatch && dateMatch) {
+                row.style.display = '';
+              } else {
+                row.style.display = 'none';
+              }
+            });
+          }
+        </script>
+      </div>
+    </div>
+    
+    <style>
+      .table-container {
+        border: 1px solid #ff0000;
+        padding: 20px;
+      }
+      .table th, .table td {
+        vertical-align: middle;
+        white-space: nowrap; /* Prevent text from wrapping */
+      }
+      .action-btn {
+        background-color: #ff0000;
+        border: none;
+        color: white;
+        padding: 5px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    </style>
+    
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('active');
+      document.querySelector('.content').classList.toggle('active');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.sidebar {
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background: #ff0000;
+  color: #fff;
+  transition: all 0.3s;
+  width: 200px;
+}
+
+.sidebar.active {
+  margin-left: -250px;
+}
+
+.sidebar .nav-link {
+  color: #fff;
+  padding: 10px 15px;
+  display: block;
+  transition: background-color 0.1s ease-in-out; /* Increase hover transition speed */
+}
+
+.sidebar .nav-link:hover {
+  background-color: black; /* Hover background color */
+  color: #fff;
+}
+
+.sidebar .nav-link.active {
+  background-color: black; /* Active background color */
+  color: #fff;
+}
+
+.sidebar .dropdown-menu {
+  background: #ff0000;
+}
+
+.sidebar .dropdown-item {
+  color: #fff;
+}
+
+.sidebar .dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.content {
+  margin-left: 200px;
+  transition: margin-left 0.3s;
+}
+
+.content.active {
+  margin-left: 0;
+}
+
+.toggle-btn {
+  cursor: pointer;
+}
+
+.sidebar-logo {
+  text-align: center;
+  padding: 20px;
+}
+
+.sidebar-logo img {
+  max-width: 100px;
+  height: auto;
+}
+
+.navbar {
+  background: #ffffff;
+}
+
+.navbar .navbar-nav .nav-link {
+  color: #000;
+}
+
+.navbar .navbar-nav .nav-link:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.profile-icon {
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.dropdown-menu {
+  right: 0;
+  left: auto;
+}
+.custom-danger{
+  background-color: red;
+  color: white;
+}

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Login and Signup Form</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Boxicons CSS -->
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    
+    <!-- Custom CSS -->
+    <style>
+        /* Google Fonts - Poppins */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to right, #FFFFFF 50%, #FF0000 50%);
+        }
+        @media (max-width: 768px) {
+            .container {
+                height: 100vh;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(to bottom, #FFFFFF 50%, #FF0000 50%);
+            } 
+        }    
+        .form {
+            position: relative;
+            max-width: 430px;
+            width: 100%;
+            padding: 30px;
+            margin: 10px;
+            border-radius: 6px;
+            background: #FFF;
+            border: 2px solid #d8d8d8; /* Black border */
+        }
+
+        .form.signup {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .forms.show-signup .form.signup {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .forms.show-signup .form.login {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        header {
+            font-size: 28px;
+            font-weight: 600;
+            color: #232836;
+            text-align: start;
+        }
+
+        .form .field {
+            position: relative;
+            height: 50px;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+
+        .field input,
+        .field button {
+            height: 100%;
+            width: 100%;
+            border: none;
+            font-size: 16px;
+            font-weight: 400;
+            border-radius: 6px;
+        }
+
+        .field input {
+            outline: none;
+            padding: 0 15px;
+            border: 1px solid #ff0000;
+        }
+
+        .field input:focus {
+            border-bottom-width: 2px;
+        }
+
+        .eye-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #8b8b8b;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .field button {
+            color: #fff;
+            background-color: #FF0000;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .field button:hover {
+            background-color: #ff0404;
+        }
+
+        .form-link {
+            text-align: start;
+            margin-top: 10px;
+        }
+
+        .form-link span,
+        .form-link a {
+            font-size: 14px;
+            font-weight: 400;
+            color: #232836;
+        }
+
+        .form a {
+            color: #ff0000;
+            text-decoration: none;
+        }
+
+        .form-content a:hover {
+            text-decoration: underline;
+        }
+
+        .line {
+            position: relative;
+            height: 1px;
+            width: 100%;
+            margin: 36px 0;
+            background-color: #d4d4d4;
+        }
+
+        .line::before {
+            content: 'Or';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #FFF;
+            color: #8b8b8b;
+            padding: 0 15px;
+        }
+
+        .media-options a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media screen and (max-width: 400px) {
+            .form {
+                padding: 20px 10px;
+            }
+        }
+
+        /* Logo Container */
+        .logo-container {
+            position: absolute;
+            top: 20px; /* Adjust as needed */
+            left: 20px; /* Adjust as needed */
+        }
+
+        .logo {
+            width: 150px; /* Adjust size as needed */
+            height: auto;
+        }
+
+        @media screen and (max-width: 768px) {
+            .logo-container {
+                position: absolute;
+                top: 10px; /* Adjust as needed */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        
+        /* New Image Container */
+        .new-image-container {
+            position: absolute;
+            bottom: 10px; /* Adjust as needed */
+            left: 50px; /* Adjust as needed */
+        }
+
+        .new-image {
+            width: 350px; /* Adjust size as needed */
+            height: auto;
+        }
+
+        @media screen and (max-width: 768px) {
+            .logo-container {
+                position: absolute;
+                bottom: 100px; /* Adjust as needed */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .new-image-container {
+                position: absolute;
+                bottom: 10px; /* Adjust as needed */
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .new-image {
+            width: 250px; /* Adjust size as needed */
+            height: auto;
+        }
+        }
+        
+        /* New Image Container */
+        .new-image-container1 {
+            position: absolute;
+            bottom: 10px; /* Adjust as needed */
+            right: 10px; /* Adjust as needed */
+        }
+
+        .new-image1 {
+            width: 350px; /* Adjust size as needed */
+            height: auto;
+        }
+
+        @media screen and (max-width: 768px) {
+            .logo-container1 {
+                position: absolute;
+                bottom: 10px; /* Adjust as needed */
+                right: 50%;
+                transform: translateX(-50%);
+            }
+
+            .new-image-container1 {
+                position: absolute;
+                bottom: 10px; /* Adjust as needed */
+                right: 50%;
+                transform: translateX(-50%);
+                display: none;
+            }
+            .new-image1 {
+            width: 250px; /* Adjust size as needed */
+            height: auto;
+        }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="./images/logo.png" alt="Logo" class="logo">
+    </div>
+    <!-- New Image -->
+    <div class="new-image-container">
+        <img src="./images/login-left-image.png" alt="New Image" class="new-image">
+    </div>
+    <div class="new-image-container1">
+        <img src="./images/login-right-image.png" alt="New Image" class="new-image1">   
+        
+    </div>
+    <section class="container forms">
+        <div class="form login mx-2">
+            <div class="form-content shadow-sm">
+                <header>Login</header>
+                <form  action="admin/index.html">
+                    <div class="field input-field mb-3">
+                        <input type="email" placeholder="Email" class="form-control">
+                    </div>
+
+                    <div class="field input-field mb-3">
+                        <input type="password" placeholder="Password" class="form-control" id="password">
+                        <i class='bx bx-hide eye-icon' id="togglePassword"></i>
+                    </div>
+
+                    <div class="form-link mb-3">
+                        <a href="#" class="forgot-pass"><b>Forgot password?</b></a>
+                    </div>
+
+                    <div class="field button-field">
+                        <button class="btn btn-danger">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.getElementById('togglePassword');
+            const password = document.getElementById('password');
+
+            togglePassword.addEventListener('click', function () {
+                // Toggle the type attribute
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                
+                // Toggle the icon
+                this.classList.toggle('bx-show');
+                this.classList.toggle('bx-hide');
+            });
+        });
+    </script>
+</body>
+</html>

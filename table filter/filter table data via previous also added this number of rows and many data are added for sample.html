@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="content">
+    <div class="container-fluid">
+      <div class="bg-light p-3 rounded-3">
+        <div class="d-flex justify-content-between px-3 align-items-end">
+          <div>
+            <h3>Attendance List</h3>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item active text-danger" aria-current="page"><b>Home</b></li>
+                <li class="breadcrumb-item active" aria-current="page">Employee</li>
+              </ol>
+            </nav>
+          </div>
+          <div class="button text-end m-2 mx-1">
+            <a href="Add Employee.html">
+              <button class="align-items-center text-end bg-danger text-light fw-bold p-1 px-2 rounded" style="border: none;" data-bs-toggle="tooltip" data-bs-placement="right" title="CREATE">
+                <b><i class="fa-solid fa-plus"></i></b>
+              </button>
+            </a>
+          </div>
+        </div>
+
+        <div class="container my-4">
+          <div class="table-container bg-white p-3 rounded">
+            <div class="d-flex justify-content-between mb-3">
+              <div class="d-flex align-items-center">
+                <label for="rowSelect" class="me-2">Listings per page:</label>
+                <select id="rowSelect" class="form-select w-auto">
+                  <option value="all">All</option>
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+              <div class="input-group w-50">
+                <input id="searchInput" type="text" class="form-control" placeholder="Search by Employee, Status, Clock In, Clock Out">
+                <button class="btn btn-outline-danger" type="button">Search</button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead class="table-light text-center">
+                  <tr>
+                    <th>EMPLOYEE</th>
+                    <th>DATE</th>
+                    <th>STATUS</th>
+                    <th>CLOCK IN</th>
+                    <th>CLOCK OUT</th>
+                    <th>LATE</th>
+                    <th>EARLY LEAVING</th>
+                    <th>OVERTIME</th>
+                    <th>ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTable" class="text-center">
+                  <tr>
+                    <td>Elumalai</td>
+                    <td>2024-09-10</td>
+                    <td>Present</td>
+                    <td>08:50 AM</td>
+                    <td>05:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Rajkumar</td>
+                    <td>2024-09-10</td>
+                    <td>Absent</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Dhaksnamoorthy</td>
+                    <td>2024-09-10</td>
+                    <td>Late</td>
+                    <td>09:15 AM</td>
+                    <td>06:00 PM</td>
+                    <td>00:15:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Priya</td>
+                    <td>2024-09-10</td>
+                    <td>Present</td>
+                    <td>08:55 AM</td>
+                    <td>05:10 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:10:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Arun</td>
+                    <td>2024-09-10</td>
+                    <td>Present</td>
+                    <td>08:45 AM</td>
+                    <td>05:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Anjali</td>
+                    <td>2024-09-10</td>
+                    <td>Late</td>
+                    <td>09:00 AM</td>
+                    <td>05:30 PM</td>
+                    <td>00:10:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Kumar</td>
+                    <td>2024-09-09</td>
+                    <td>Present</td>
+                    <td>08:50 AM</td>
+                    <td>05:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Sunita</td>
+                    <td>2024-09-09</td>
+                    <td>Absent</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Ravi</td>
+                    <td>2024-09-09</td>
+                    <td>Late</td>
+                    <td>09:20 AM</td>
+                    <td>05:30 PM</td>
+                    <td>00:20:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Meera</td>
+                    <td>2024-09-08</td>
+                    <td>Present</td>
+                    <td>08:55 AM</td>
+                    <td>05:15 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:15:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Narendra</td>
+                    <td>2024-09-08</td>
+                    <td>Present</td>
+                    <td>08:40 AM</td>
+                    <td>05:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Seema</td>
+                    <td>2024-09-08</td>
+                    <td>Late</td>
+                    <td>09:10 AM</td>
+                    <td>05:20 PM</td>
+                    <td>00:10:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Vinod</td>
+                    <td>2024-09-07</td>
+                    <td>Present</td>
+                    <td>08:50 AM</td>
+                    <td>05:05 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:05:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Deepika</td>
+                    <td>2024-09-07</td>
+                    <td>Absent</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Manoj</td>
+                    <td>2024-09-07</td>
+                    <td>Late</td>
+                    <td>09:05 AM</td>
+                    <td>05:15 PM</td>
+                    <td>00:05:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                  <tr>
+                    <td>Rita</td>
+                    <td>2024-09-06</td>
+                    <td>Present</td>
+                    <td>08:45 AM</td>
+                    <td>05:00 PM</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td>00:00:00</td>
+                    <td><button class="action-btn">🗑</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          // Search functionality for all columns (Employee, Status, Clock In, Clock Out)
+          document.getElementById('searchInput').addEventListener('input', function () {
+            let filter = this.value.toLowerCase();
+            let rows = document.querySelectorAll('#attendanceTable tr');
+            
+            rows.forEach((row) => {
+              let cells = row.querySelectorAll('td');
+              let rowText = '';
+              
+              cells.forEach((cell) => {
+                rowText += cell.textContent.toLowerCase() + ' ';
+              });
+              
+              // Show or hide row based on the filter
+              if (rowText.includes(filter)) {
+                row.style.display = '';
+              } else {
+                row.style.display = 'none';
+              }
+            });
+          });
+
+          // Handle row number selection
+          document.getElementById('rowSelect').addEventListener('change', function () {
+            let selectedValue = this.value;
+            let rows = document.querySelectorAll('#attendanceTable tr');
+            
+            rows.forEach((row, index) => {
+              if (selectedValue === 'all') {
+                row.style.display = '';
+              } else {
+                row.style.display = index < selectedValue ? '' : 'none';
+              }
+            });
+          });
+        </script>
+
+      </div>
+    </div>
+    
+    <style>
+      .table-container {
+        border: 1px solid #ff0000;
+        padding: 20px;
+      }
+
+      .table th,
+      .table td {
+        vertical-align: middle;
+        white-space: nowrap; /* Prevent text from wrapping */
+      }
+
+      .action-btn {
+        background-color: #ff0000;
+        border: none;
+        color: white;
+        padding: 5px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      .action-btn:hover {
+        background-color: #cc0000;
+      }
+    </style>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
